@@ -10,8 +10,10 @@ const canvas = document.getElementById("canvas");
 const playPauseButton = document.getElementById("play-pause");
 const stepNextButton = document.getElementById("step-next");
 const iterationSpan = document.getElementById("iteration-span");
+const stableText = document.getElementById("stable-text");
 
 let iteration = 0;
+let stableAt = -1;
 
 const canvasWidth = Math.floor(canvas.clientWidth / CELL_SIZE_PX);
 const canvasHeight = Math.floor(canvas.clientHeight / CELL_SIZE_PX);
@@ -93,27 +95,30 @@ playPauseButton.addEventListener("click", () => {
   }
 });
 
+const iterate = () => {
+  drawGrid();
+  drawCells();
+  const isStable = universe.tick();
+
+  if (isStable && stableAt === -1) {
+    stableAt = iteration;
+    stableText.textContent = `stable state found at iteration: ${stableAt}`;
+  }
+
+  iteration += 1;
+  iterationSpan.textContent = `${iteration}`;
+};
+
 stepNextButton.addEventListener("click", () => {
   if (!isPaused()) {
     pause();
   }
-
-  drawGrid();
-  drawCells();
-  universe.tick();
-  iteration += 1;
-  iterationSpan.textContent = `${iteration}`;
+  iterate();
 });
 
 let animationId = null;
 const renderLoop = () => {
-  drawGrid();
-  drawCells();
-
-  universe.tick();
-  iteration += 1;
-  iterationSpan.textContent = `${iteration}`;
-
+  iterate();
   animationId = requestAnimationFrame(renderLoop);
 };
 

@@ -1,13 +1,18 @@
 mod utils;
 
 use fixedbitset::FixedBitSet;
+use once_cell::sync::Lazy;
 use wasm_bindgen::prelude::*;
+
+static UNIVERSE_START_STATE: Lazy<FixedBitSet> = Lazy::new(|| FixedBitSet::with_capacity(64 * 64));
 
 #[wasm_bindgen]
 pub struct Universe {
     width: u32,
     height: u32,
     cells: FixedBitSet,
+    past1: FixedBitSet,
+    past2: FixedBitSet,
 }
 
 impl Universe {
@@ -24,6 +29,17 @@ impl Universe {
             let idx = self.get_index(*row, *col);
             self.cells.set(idx, true);
         });
+    }
+
+    fn store_and_compare(&mut self) -> bool {
+        if self.cells.is_subset(&self.past2) {
+            return true;
+        }
+
+        let past1 = self.past1.clone();
+        self.past1 = self.cells.clone();
+        self.past2 = past1;
+        false
     }
 
     fn live_neighbor_count(&self, row: u32, col: u32) -> u8 {
@@ -61,6 +77,8 @@ impl Universe {
             width,
             height,
             cells,
+            past1: UNIVERSE_START_STATE.clone(),
+            past2: UNIVERSE_START_STATE.clone(),
         }
     }
 
@@ -86,7 +104,7 @@ impl Universe {
         self.cells.set_range(.., false);
     }
 
-    pub fn tick(&mut self) {
+    pub fn tick(&mut self) -> bool {
         let mut next = self.cells.clone();
 
         for row in 0..self.height {
@@ -117,6 +135,7 @@ impl Universe {
             }
         }
 
-        self.cells = next
+        self.cells = next;
+        self.store_and_compare()
     }
 }
