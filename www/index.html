@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Interactive Conway's Game of Life</title>
+  <style>
+    body {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    button {
+      width: 40px;
+      height: 20px;
+    }
+
+    #canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+    }
+
+    #statusline {
+      position: absolute;
+      left: 50%;
+      top: calc(50% + 400px + 32px);
+      transform: translate(-50%, 0);
+      width: 800px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+  </style>
+</head>
+
+<body>
+  <noscript>
+    This page contains webassembly and javascript content, please enable
+    javascript in your browser.
+  </noscript>
+  <h1>Conway's Game of Life</h1>
+  <canvas id="canvas"></canvas>
+  <div id="statusline">
+    <p>iteration: <span id="iteration-span"></span></p>
+    <div id="buttons-group">
+      <button id="play-pause">⏸</button>
+      <button id="step-next">⏭︎</button>
+    </div>
+  </div>
+  <script defer src="./bootstrap.js"></script>
+</body>
+
+</html>
