@@ -4,14 +4,6 @@ use fixedbitset::FixedBitSet;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[repr(u8)] // makes sure each cell is represented as a single byte
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Cell {
-    Dead = 0,
-    Alive = 1,
-}
-
-#[wasm_bindgen]
 pub struct Universe {
     width: u32,
     height: u32,
@@ -84,17 +76,11 @@ impl Universe {
         self.cells.as_slice().as_ptr()
     }
 
-    /// Set the width of the universe.
-    ///
-    /// Reset all cells to the dead state.
     pub fn set_width(&mut self, width: u32) {
         self.width = width;
         self.cells.set_range(.., false);
     }
 
-    /// Set the height of the universe.
-    ///
-    /// Resets all cells to the dead state.
     pub fn set_height(&mut self, height: u32) {
         self.height = height;
         self.cells.set_range(.., false);
